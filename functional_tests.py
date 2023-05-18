@@ -1,6 +1,8 @@
 from selenium import webdriver
 
-browser = webdriver.Firefox(executable_path=r'/usr/bin/firefox')
-browser.get('http://localhost:8000/')
+browser = webdriver.Firefox(executable_path=r'/usr/local/bin/geckodriver')
+browser.get('http://127.0.0.1:8000/')
 
-assert 'Django' in browser.title
+assert 'To-Do' in browser.title
+
+browser.quit()

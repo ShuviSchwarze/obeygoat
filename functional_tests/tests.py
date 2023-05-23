@@ -7,6 +7,9 @@ from django.test import LiveServerTestCase
 import unittest
 
 MAX_WAIT = 5
+OPTIONS = Options()
+OPTIONS.add_argument("--headless")
+OPTIONS.add_argument("--no-sandbox")
 
 class NewVisitorTest(LiveServerTestCase):
 
@@ -14,8 +17,8 @@ class NewVisitorTest(LiveServerTestCase):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
-        #self.browser = webdriver.Firefox(options=options)
-        self.browser = webdriver.Firefox()
+        self.browser = webdriver.Firefox(options=OPTIONS)
+        #self.browser = webdriver.Firefox()
 
     def tearDown(self):
         self.browser.quit()
@@ -96,7 +99,7 @@ class NewVisitorTest(LiveServerTestCase):
         ## We use a new browser session to make sure that no information
         ## of Edith's is coming through from the cookies etc
         self.browser.quit()
-        self.browser = webdriver.Firefox()
+        self.browser = webdriver.Firefox(options=OPTIONS)
 
         # Fracis visits the home page. There is no sign of Edith's
         # list

@@ -6,7 +6,7 @@ from selenium.common.exceptions import WebDriverException
 from django.test import LiveServerTestCase
 import unittest
 
-MAX_WAIT = 10
+MAX_WAIT = 5
 
 class NewVisitorTest(LiveServerTestCase):
 
@@ -14,7 +14,8 @@ class NewVisitorTest(LiveServerTestCase):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
-        self.browser = webdriver.Firefox(options=options)
+        #self.browser = webdriver.Firefox(options=options)
+        self.browser = webdriver.Firefox()
 
     def tearDown(self):
         self.browser.quit()
@@ -65,7 +66,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Use peacock feathers to make a fly')
         inputbox.send_keys(Keys.ENTER)
-
+    
         # The page updates again, and now shows both items on her list
         self.wait_for_row_in_list_table('2: Use peacock feathers to make a fly')
         self.wait_for_row_in_list_table('1: Buy peacock feathers')
@@ -105,10 +106,20 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotIn('make a fly', page_text)
 
         # Fracis starts a new list by entering a new item. He
-        # is less interesting than Edith
+        # is less interesting than Edith...
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Buy milk')
+
+        # Francis gets his own unique URL
+        francis_list_url = self.browser.current_url
+        self.assertRegex(francis_list_url, '/lists/.+')
+        self.assertNotEqual(francis_list_url, edith_list_url)
+
+        # Again, there is no trace of Edith's list
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers', page_text)
         self.assertIn('Buy milk', page_text)
 
         # Satisfied, they both go back to sleep

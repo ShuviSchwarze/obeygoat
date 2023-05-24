@@ -1,4 +1,5 @@
 import time
+import os
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -18,7 +19,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         self.browser = webdriver.Firefox(options=OPTIONS)
-        # self.browser = webdriver.Firefox()
+        staging_server = os.environ.get("STAGING_SERVER")
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server
 
     def tearDown(self):
         self.browser.quit()
